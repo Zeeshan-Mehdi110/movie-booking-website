@@ -36,7 +36,7 @@ export const sendAdminAuthRequest = async (data) => {
     .catch((err) => console.log(err));
 
   if (res.status !== 200) {
-    return console.log("Unexpectyed Error");
+    return console.log("Unexpected Error");
   }
 
   const resData = await res.data;
@@ -88,7 +88,7 @@ export const deleteBooking = async (id) => {
     .catch((err) => console.log(err));
 
   if (res.status !== 200) {
-    return console.log("Unepxected Error");
+    return console.log("Unexpected Error");
   }
 
   const resData = await res.data;

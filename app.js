@@ -18,12 +18,16 @@ app.use("/movie", movieRouter);
 app.use("/booking", bookingsRouter);
 
 mongoose
-  .connect(
-    `mongodb+srv://admin:${process.env.MONGODB_PASSWORD}@cluster0.pq0kw.mongodb.net/?retryWrites=true&w=majority`
-  )
-  .then(() =>
-    app.listen(5000, () =>
-      console.log("Connected To Database And Server is running")
-    )
-  )
-  .catch((e) => console.log(e));
+  .connect(process.env.MONGODB_CONNECTION_URL)
+  .then(() => {
+    console.log('database connected successfully!!')
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+
+app.use((err, req, res, next) => {
+  if (err) res.status(400).json({ error: err.message })
+  else next()
+})
+app.listen(5000, () => console.log('server is listening at port 5000'))
