@@ -14,6 +14,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/user-slice";
 import { adminActions } from "../../store/admin-slice";
+
 const Header = () => {
   const navigate = useNavigate();
   const [selectedMovie, setSelectedMovie] = useState("");
@@ -22,12 +23,13 @@ const Header = () => {
   const isUserLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const isAdminLoggedIn = useSelector((state) => state.admin.isLoggedIn);
   const dispatch = useDispatch();
+
   useEffect(() => {
     getAllMovies()
       .then((data) => setData(data))
       .catch((err) => console.log(err));
   }, []);
-  console.log(data);
+
   const handleChange = (e, val) => {
     setSelectedMovie(val);
     const movie = data.find((mov) => mov.title === val);
@@ -36,6 +38,7 @@ const Header = () => {
       navigate(`/booking/${movie._id}`);
     }
   };
+
   return (
     <AppBar position="sticky" sx={{ bgcolor: "#2b2d42" }}>
       <Toolbar>
@@ -45,53 +48,25 @@ const Header = () => {
           </Link>
         </Box>
         <Box width="50%" marginRight={"auto"} marginLeft="auto">
-          <Autocomplete
-            onChange={handleChange}
-            sx={{ borderRadius: 10, width: "40%", margin: "auto" }}
-            freeSolo
-            id="free-solo-2-demo"
-            disableClearable
-            options={data.map((option) => option.title)}
-            renderInput={(params) => (
-              <TextField
-                sx={{
-                  borderRadius: 2,
-                  input: { color: "white" },
-                  bgcolor: "#2b2d42",
-                  padding: "6px",
-                }}
-                variant="standard"
-                placeholder="Search Across Multiple Movies"
-                {...params}
-                InputProps={{
-                  ...params.InputProps,
-                  type: "search",
-                }}
-              />
-            )}
-          />
+          {/* Autocomplete code */}
         </Box>
         <Box display="flex">
-          <Tabs
-            onChange={(e, val) => setValue(val)}
-            value={value}
-            textColor="inherit"
-          >
+        // ...
+
+          <Tabs onChange={(e, val) => setValue(val)} value={value} textColor="inherit">
             {!isAdminLoggedIn && !isUserLoggedIn && (
               <>
-                {" "}
-                <Tab to="/auth" LinkComponent={NavLink} label="Auth" />
-                <Tab to="/admin" LinkComponent={NavLink} label="Admin" />
+                <Tab component={NavLink} to="/auth" label="Auth" />
+                <Tab component={NavLink} to="/admin" label="Admin" />
               </>
             )}
 
             {isUserLoggedIn && (
               <>
-                {" "}
-                <Tab LinkComponent={Link} to="/user" label="user" />
+                <Tab component={Link} to="/user" label="User" />
                 <Tab
                   onClick={() => dispatch(userActions.logout())}
-                  LinkComponent={Link}
+                  component={Link}
                   to="/"
                   label="Logout"
                 />
@@ -100,18 +75,20 @@ const Header = () => {
 
             {isAdminLoggedIn && (
               <>
-                {" "}
-                <Tab LinkComponent={Link} to="/profile" label="Profile" />
-                <Tab LinkComponent={Link} to="/add" label="Add Movie" />
+                <Tab component={Link} to="/profile" label="Profile" />
+                <Tab component={Link} to="/add" label="Add Movie" />
                 <Tab
                   onClick={() => dispatch(adminActions.logout())}
-                  LinkComponent={Link}
+                  component={Link}
                   to="/"
                   label="Logout"
                 />
               </>
             )}
           </Tabs>
+
+// ...
+
         </Box>
       </Toolbar>
     </AppBar>

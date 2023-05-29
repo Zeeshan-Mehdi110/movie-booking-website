@@ -7,8 +7,7 @@ import { getMovieDetails, newBooking } from "../../api-helpers/api-helpers";
 const Booking = () => {
   const [movie, setMovie] = useState();
   const [inputs, setInputs] = useState({ seatNumber: "", date: "" });
-  const id = useParams().id;
-  console.log(id);
+  const { id } = useParams();
 
   useEffect(() => {
     getMovieDetails(id)
@@ -23,7 +22,6 @@ const Booking = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(inputs);
     newBooking({ ...inputs, movie: movie._id })
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
