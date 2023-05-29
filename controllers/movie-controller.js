@@ -11,24 +11,23 @@ export const addMovie = async (req, res, next) => {
   let adminId;
 
   // verify token
-  jwt.verify(extractedToken, process.env.SECRET_KEY, (err, decrypted) => {
-    if (err) {
-      return res.status(400).json({ message: `${err.message}` });
-    } else {
-      adminId = decrypted.id;
-      return;
-    }
-  });
+  try {
+    const decrypted = await jwt.verify(extractedToken, process.env.SECRET_KEY);
+    adminId = decrypted.id;
+  } catch (err) {
+    return res.status(400).json({ message: `${err.message}` });
+  }
+
 
   //create new movie
   const { title, description, releaseDate, posterUrl, featured, actors } =
     req.body;
   if (
-    !title &&
-    title.trim() === "" &&
-    !description &&
-    description.trim() == "" &&
-    !posterUrl &&
+    !title ||
+    title.trim() === "" ||
+    !description ||
+    description.trim() === "" ||
+    !posterUrl ||
     posterUrl.trim() === ""
   ) {
     return res.status(422).json({ message: "Invalid Inputs" });
@@ -45,16 +44,18 @@ export const addMovie = async (req, res, next) => {
       posterUrl,
       title,
     });
-    const session = await mongoose.startSession();
+
+    // Save the movie
+    await movie.save();
+
+    // Update the adminUser's addedMovies array
     const adminUser = await Admin.findById(adminId);
-    session.startTransaction();
-    await movie.save({ session });
     adminUser.addedMovies.push(movie);
-    await adminUser.save({ session });
-    await session.commitTransaction();
+    await adminUser.save();
   } catch (err) {
-    return console.log(err);
+    return console.log(err.message);
   }
+
 
   if (!movie) {
     return res.status(500).json({ message: "Request Failed" });
